@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KilimoSmart</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Georgia', serif;
+      margin: 0;
+      padding: 0;
+      /* Using a local image for robustness, or ensure the URL is stable */
+      background: #f0f9f0 url('https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1400&q=80') no-repeat top center;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #2f4f2f;
+      animation: fadeInBody 2s ease-in;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Header Styles */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      /* Corrected: Made header background consistent with nav green */
+      background-color: rgba(34, 139, 34, 0.9);
+      color: white; /* Ensure text inside header is white */
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-section img {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .logo-section h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      /* Corrected: Ensure h1 inside header is white */
+      color: white;
+      font-family: 'Trebuchet MS', sans-serif; /* Keep specific font for consistency */
+    }
+
+    @media (max-width: 600px) {
+      .logo-section h1 {
+        font-size: 1.2rem;
+      }
+
+      .logo-section img {
+        height: 30px;
+        width: 30px;
+      }
+    }
+
+    /* Navigation Styles */
+    nav {
+      background: rgba(34, 139, 34, 0.9);
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      animation: slideDown 1s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 20px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    /* Auth Buttons in Nav */
+    #auth-buttons {
+      display: inline-block;
+      margin-left: 20px;
+    }
+
+    #auth-buttons button {
+      width: auto; /* Override general 100% width for nav buttons */
+      padding: 8px 15px; /* Adjust padding for smaller nav buttons */
+      margin-top: 0; /* Override general margin-top */
+      font-size: 16px;
+      border-radius: 6px;
+      background: #4CAF50; /* A slightly different green for button clarity */
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: none; /* Ensure no border */
+    }
+
+    #auth-buttons button:hover {
+      background: #388e3c;
+    }
+
+    #auth-buttons button:first-child {
+      margin-right: 10px;
+    }
+
+    /* Section Styles */
+    section {
+      background: rgba(255, 255, 255, 0.9);
+      margin: 30px auto;
+      padding: 30px 20px;
+      max-width: 800px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: fadeInSection 1.2s ease-in-out;
+    }
+
+    @keyframes fadeInSection {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 {
+      color: #2e7d32;
+      font-family: 'Trebuchet MS', sans-serif;
+    }
+
+    /* Form Elements */
+    input, button {
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 16px;
+      width: 100%;
+      border: 1px solid #a5d6a7;
+      border-radius: 6px;
+    }
+
+    button {
+      background: #66bb6a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #388e3c;
+    }
+
+    /* Result Displays */
+    #calendarResults, #weatherData, #aiResponse {
+      margin-top: 20px;
+      background: #f9fff9;
+      padding: 15px;
+      border-left: 6px solid #81c784;
+      border-radius: 8px;
+    }
+    /* Specific style for AI response */
+    #aiResponse {
+        background: #f0fff4;
+        border-left: 5px solid #34d399;
+    }
+
+    /* Crop Icons */
+    .crop-icon {
+      display: inline-block;
+      margin: 10px 10px 0 0;
+      font-size: 18px;
+      padding: 8px 12px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 20px;
+    }
+
+    /* Search Results */
+    .search-results {
+      background: #fdfdfd;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 5px;
+      border-radius: 4px;
+    }
+
+    .search-results div {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .search-results div:hover {
+      background: #e0f7fa;
+    }
+
+    /* Tips */
+    .tips {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f1f8e9;
+      border-left: 5px solid #c5e1a5;
+      font-style: italic;
+      color: #33691e;
+      border-radius: 6px;
+      animation: fadeInTip 1s ease-in;
+    }
+
+    @keyframes fadeInTip {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Footer Styles */
+    .footer {
+      background-color: #14532d;
+      color: white;
+      padding: 20px 10px;
+      font-family: Arial, sans-serif; /* Kept this specific font for footer */
+    }
+
+    .footer-container {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .footer-section {
+      flex: 1 1 180px;
+      margin: 10px;
+    }
+
+    .footer-section h3,
+    .footer-section h4 {
+      color: #bbf7d0;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .footer-section p {
+      font-size: 13px;
+      margin: 2px 0;
+    }
+
+    .footer-section a {
+      display: block;
+      color: #a7f3d0;
+      font-size: 13px;
+      text-decoration: none;
+      margin-bottom: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .footer-section a:hover {
+      color: white;
+      transform: translateX(4px);
+    }
+
+    .footer-section input,
+    .footer-section textarea {
+      width: 95%;
+      padding: 7px;
+      font-size: 13px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 6px;
+    }
+
+    .footer-section textarea {
+      height: 60px;
+    }
+
+    .footer-section button {
+      background-color: #22c55e;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      font-size: 13px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 5px;
+      transition: 0.2s ease;
+      width: auto; /* Override general 100% width for footer buttons */
+      margin-top: 5px; /* Adjust margin-top for footer buttons */
+    }
+
+    .footer-section button:hover {
+      background-color: #15803d;
+      transform: scale(1.03);
+    }
+
+    .full-width {
+      flex: 1 1 100%;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .footer-section {
+        flex: 1 1 100%;
+        text-align: center;
+      }
+
+      .footer-section input,
+      .footer-section textarea {
+        width: 90%;
+      }
+    }
+
+    /* Auth Modal Styles */
+    #auth-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      display: flex; /* Initially hidden, but uses flex for centering */
+      justify-content: center;
+      align-items: center;
+      /* Corrected: Hidden by default. JS will change display to 'flex' */
+      display: none;
+    }
+
+    #auth-modal > div { /* The inner modal content box */
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      position: relative;
+    }
+
+    #auth-modal button.close-button { /* Corrected: Specific style for the close button */
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none; /* No background */
+      border: none; /* No border */
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+      padding: 5px; /* Smaller padding */
+      width: auto; /* Not 100% width */
+      margin-top: 0; /* No top margin */
+      transition: color 0.2s ease;
+    }
+
+    #auth-modal button.close-button:hover {
+      color: #f00; /* Red on hover */
+    }
+
+    #auth-modal input { /* Corrected: Specific styles for modal inputs */
+      width: calc(100% - 16px); /* Account for padding */
+      margin-bottom: 10px;
+      padding: 8px;
+      box-sizing: border-box; /* Include padding in width */
+    }
+
+    #auth-modal button { /* Corrected: Specific styles for modal buttons */
+      background: #14532d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      width: auto; /* Ensure buttons don't take full width here */
+      margin-top: 15px; /* Adjust margin if needed */
+    }
+
+    /* Specific form visibility within modal */
+    #login-form, #signup-form {
+      display: none; /* Controlled by JS */
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-section">
+      <img src="logo.png" alt="Kilimo Smart Logo">
+      <h1>Kilimo Smart KE</h1>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#home">🏡 Home</a>
+    <a href="#weather">🌦 Weather</a>
+    <a href="#calendar">🌾 Crop Calendar</a>
+    <a href="#profile">👩‍🌾 Profile</a>
+    <a href="#ai-help">ChatBot</a>
+    <div id="auth-buttons">
+        <button onclick="showLogin()">Log In</button>
+        <button onclick="showSignup()">Sign Up</button>
+    </div>
+  </nav>
+
+  <section id="home">
+    <h1>🚜 Welcome to AgriCrop Planner</h1>
+    <p>Find the right crops to grow based on your county and weather patterns:</p>
+    <input type="text" id="countyInput" placeholder="Search your county..." oninput="filterCounties()" autocomplete="off">
+    <div id="countyResults" class="search-results"></div>
+    <p id="selectedCounty" style="font-weight: bold; margin-top: 10px;"></p>
+    <div class="tips">🌱 Tip: Healthy soil is the foundation of good farming. Test your soil regularly for pH and nutrients.</div>
+  </section>
+
+  <section id="weather">
+    <h2>🌦 Weather Updates</h2>
+    <button onclick="fetchWeather()">Check Weather</button>
+    <div id="weatherData">Weather info will appear here.</div>
+    <div class="tips">☁️ Tip: Consider planting just after the first rain to maximize soil moisture for germination.</div>
+  </section>
+
+  <section id="calendar">
+    <h2>🌾 Crop Calendar</h2>
+    <button onclick="showCalendar()">View Crop Suggestions</button>
+    <div id="calendarResults">Recommended crops will appear here.</div>
+    <div class="tips">🌿 Tip: Rotate crops each season to improve yield and reduce soil diseases.</div>
+  </section>
+
+  <section id="profile">
+    <h2>👩‍🌾 My Farming Preferences</h2>
+    <p>[Login feature – coming soon]</p>
+  </section>
+
+  <section id="ai-help">
+    <h2>🤖 Ask Our AI Assistant</h2>
+    <p>Type a farming question and get instant help.</p>
+    <input type="text" id="aiQuery" placeholder="E.g. How do I prevent maize disease?" />
+    <button onclick="askAI()">Ask</button>
+    <div id="aiResponse">
+      AI response will appear here...
+    </div>
+  </section>
+
+<script>
+  // Data for counties and crops
+  const counties = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Kiambu", "Uasin Gishu", "Machakos",
+    "Meru", "Embu", "Nyeri", "Kakamega", "Kisii", "Homabay", "Migori", "Kericho",
+    "Nandi", "Laikipia", "Murang'a", "Kajiado", "Bomet", "Trans Nzoia", "Nyamira",
+    "Turkana", "Isiolo", "Taita Taveta", "Kilifi", "Tharaka Nithi", "Busia"];
+
+  const universalCrops = [
+    { name: "Maize", emoji: "🌽" },
+    { name: "Beans", emoji: "🫘" },
+    { name: "Sukuma Wiki", emoji: "🥬" },
+    { name: "Tomatoes", emoji: "🍅" },
+    { name: "Onions", emoji: "🧅" },
+    { name: "Cabbage", emoji: "🥬"}
+  ];
+
+  const cropData = {};
+  counties.forEach(county => {
+    cropData[county] = [...universalCrops];
+  });
+
+  let selectedCounty = "";
+
+  // Functions for County Search
+  function filterCounties() {
+    const input = document.getElementById("countyInput").value.toLowerCase();
+    const resultsDiv = document.getElementById("countyResults");
+    resultsDiv.innerHTML = "";
+
+    if (input.length === 0) return;
+
+    const matches = counties.filter(county =>
+      county.toLowerCase().includes(input)
+    );
+
+    matches.forEach(county => {
+      const div = document.createElement("div");
+      div.textContent = county;
+      div.onclick = () => selectCounty(county);
+      resultsDiv.appendChild(div);
+    });
+  }
+
+  function selectCounty(county) {
+    selectedCounty = county;
+    document.getElementById("countyInput").value = county;
+    document.getElementById("countyResults").innerHTML = "";
+    document.getElementById("selectedCounty").textContent = `📍 Selected County: ${county}`;
+  }
+
+  // Function for Weather Data (Simulated)
+  function fetchWeather() {
+    const output = document.getElementById("weatherData");
+    if (!selectedCounty) {
+      output.innerText = "⚠️ Please select a county to get weather.";
+      return;
+    }
+
+    output.innerHTML = `<strong>Loading weather for ${selectedCounty}...</strong>`;
+
+    // Simulated weather data
+    setTimeout(() => {
+      const temp = Math.floor(Math.random() * (30 - 20) + 20);
+      const conditions = ['Sunny', 'Partly Cloudy', 'Light Rain', 'Overcast'][Math.floor(Math.random() * 4)];
+      output.innerHTML = `
+        <strong>📍 Weather in ${selectedCounty}:</strong><br>
+        🌡️ Temperature: ${temp}°C<br>
+        ⛅ Conditions: ${conditions}<br>
+        🌬️ Wind: Light breeze
+      `;
+    }, 1000); // In a real app, this would be a fetch() call to your backend API
+  }
+
+  // Function for Crop Calendar
+  function showCalendar() {
+    const output = document.getElementById("calendarResults");
+    if (!selectedCounty) {
+      output.innerText = "⚠️ Please select a county first.";
+      return;
+    }
+
+    const crops = cropData[selectedCounty];
+    output.innerHTML = `<strong>🌾 Recommended crops for ${selectedCounty}:</strong><br>`;
+    crops.forEach(crop => {
+      output.innerHTML += `<span class="crop-icon">${crop.emoji} ${crop.name}</span>`;
+    });
+  }
+
+  // Function for AI Assistant (Simulated)
+  function askAI() {
+    const query = document.getElementById("aiQuery").value;
+    const responseBox = document.getElementById("aiResponse");
+
+    if (!query) {
+      responseBox.innerText = "⚠️ Please enter a question.";
+      return;
+    }
+
+    responseBox.innerHTML = "⏳ Processing...";
+
+    // Simulated AI responses
+    const responses = {
+      "disease": "To prevent crop diseases, ensure proper spacing between plants, maintain good air circulation, and practice crop rotation. Regular monitoring helps detect issues early.",
+      "fertilizer": "Use organic fertilizers like compost and manure. Apply them before planting and during the growing season. Always follow recommended application rates.",
+      "water": "Water deeply but less frequently to encourage deep root growth. Water early in the morning to reduce evaporation. Use mulch to retain moisture.",
+      "pest": "Implement integrated pest management (IPM). Use companion planting, maintain healthy soil, and encourage beneficial insects. Only use pesticides as a last resort."
+    };
+
+    setTimeout(() => {
+      let answer = "I recommend consulting with your local agricultural extension officer for specific advice about your farming situation.";
+
+      for (let key in responses) {
+        if (query.toLowerCase().includes(key)) {
+          answer = responses[key];
+          break;
+        }
+      }
+
+      responseBox.innerHTML = `<strong>✅ Answer:</strong><br>${answer}`;
+    }, 1000); // In a real app, this would be a fetch() call to your backend API
+  }
+
+  // Functions for Auth Modal
+  function showLogin() {
+    document.getElementById("auth-modal").style.display = "flex";
+    document.getElementById("login-form").style.display = "block";
+    document.getElementById("signup-form").style.display = "none";
+  }
+
+  function showSignup() {
+    document.getElementById("auth-modal").style.display = "flex";
+    document.getElementById("signup-form").style.display = "block";
+    document.getElementById("login-form").style.display = "none";
+  }
+
+  function closeAuth() {
+    document.getElementById("auth-modal").style.display = "none";
+  }
+</script>
+
+<footer class="footer">
+  <div class="footer-container">
+
+    <div class="footer-section">
+      <h3>🌾 Kilimo Smart Ke</h3>
+      <p>Empowering farmers with smart AI planning.</p>
+      <p style="font-size: 12px;">&copy; 2025 All rights reserved</p>
+      <p style="font-size: 12px;">📧 <a href="mailto:info@cropplanner.co.ke">info@cropplanner.co.ke</a></p>
+    </div>
+
+    <div class="footer-section">
+      <h4>🔗 Links</h4>
+      <a href="#home">🏠 Home</a>
+      <a href="#calendar">📅 Calendar</a>
+      <a href="#ai-help">🤖 AI Help</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>📱 Social</h4>
+      <a href="https://facebook.com" target="_blank">📘 Facebook</a>
+      <a href="https://twitter.com" target="_blank">🐦 Twitter</a>
+      <a href="https://wa.me/254706490015" target="_blank">💬 WhatsApp</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>🔐 Access</h4>
+      <input type="email" placeholder="Email">
+      <input type="password" placeholder="Password">
+      <button>Log In</button>
+      <button>Sign Up</button>
+    </div>
+
+    <div class="footer-section">
+      <h4>📬 Subscribe</h4>
+      <input type="email" placeholder="Email">
+      <button>Subscribe</button>
+    </div>
+
+    <div class="footer-section full-width">
+      <h4>💬 Feedback</h4>
+      <textarea placeholder="Your message..."></textarea><br>
+      <button>Send</button>
+    </div>
+
+  </div>
+</footer>
+
+
+<div id="auth-modal">
+  <div>
+    <button onclick="closeAuth()" class="close-button" aria-label="Close modal">✖</button>
+
+    <div id="login-form">
+      <h3>Log In</h3>
+      <input type="email" placeholder="Email" />
+      <input type="password" placeholder="Password" />
+      <button>Log In</button>
+    </div>
+
+    <div id="signup-form">
+      <h3>Sign Up</h3>
+      <input type="text" placeholder="Full Name" />
+      <input type="email" placeholder="Email" />
+      <input type="password" placeholder="Password" />
+      <button>Sign Up</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
